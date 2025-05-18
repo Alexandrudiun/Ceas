@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Times with Three 3’s</title>
+  <!-- Google Font for Professional Look -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg-color: #f0f2f5;
+      --card-bg: #ffffff;
+      --primary-gradient: linear-gradient(90deg, #3366FF, #00CCFF);
+      --text-color: #333333;
+      --shadow-color: rgba(0, 0, 0, 0.1);
+      --shadow-hover: rgba(0, 0, 0, 0.2);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Roboto', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    h1 {
+      font-size: 2.5rem;
+      background: var(--primary-gradient);
+      background-size: 200% 200%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 1.5rem;
+      animation: gradientMove 8s ease infinite;
+    }
+    @keyframes gradientMove {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+    #times {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      width: 100%;
+      max-width: 800px;
+    }
+    #times li {
+      list-style: none;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1rem;
+      text-align: center;
+      font-size: 1.25rem;
+      font-weight: 700;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+      animation-delay: var(--delay);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    #times li:hover {
+      transform: translateY(0) scale(1.05) rotate(-1deg);
+      box-shadow: 0 8px 16px var(--shadow-hover);
+    }
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(20px); }
+      60% { opacity: 1; transform: translateY(-5px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+    #footer {
+      margin-top: 2rem;
+      font-size: 0.875rem;
+      color: #777777;
+      opacity: 0;
+      animation: fadeInUp 0.75s ease-out forwards;
+    }
+  </style>
+</head>
+<body>
+  <h1>Times with Exactly Three '3's</h1>
+  <ul id="times"></ul>
+  <div id="footer">Generated on <span id="gen-time"></span></div>
+
+  <script>
+    function pad(num) {
+      return num.toString().padStart(2, '0');
+    }
+
+    function findTimesWithThreeThrees() {
+      const results = [];
+      for (let h = 0; h < 24; h++) {
+        for (let m = 0; m < 60; m++) {
+          for (let s = 0; s < 60; s++) {
+            const time = `${pad(h)}:${pad(m)}:${pad(s)}`;
+            const count = (time.match(/3/g) || []).length;
+            if (count === 3) results.push(time);
+          }
+        }
+      }
+      return results;
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const genTime = document.getElementById('gen-time');
+      genTime.textContent = new Date().toLocaleString();
+
+      const timesList = document.getElementById('times');
+      const times = findTimesWithThreeThrees();
+
+      times.forEach((t, i) => {
+        const li = document.createElement('li');
+        li.textContent = t;
+        li.style.setProperty('--delay', `${i * 0.04}s`);
+        timesList.appendChild(li);
+      });
+
+      // Fade in footer after list animations
+      const footer = document.getElementById('footer');
+      const totalDelay = times.length * 0.04 + 0.5;
+      footer.style.animationDelay = `${totalDelay}s`;
+    });
+  </script>
+</body>
+</html>
