@@ -1,445 +1,889 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
   <meta charset="UTF-8" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
   <title>CEAS</title>
+
   <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;700&display=swap" rel="stylesheet" />
+
   <style>
+
     :root {
+
       --bg-color: #0a0e17;
+
       --text-color: #e0e0e0;
+
       --digit-color: #ffffff;
+
       --highlight-color: #ff3366;
+
       --clock-bg: #1a1f2c;
+
       --shadow-color: rgba(0, 0, 0, 0.4);
+
     }
+
     
+
     * { 
+
       box-sizing: border-box; 
+
       margin: 0; 
+
       padding: 0; 
+
     }
+
     
+
     body {
+
       font-family: 'Roboto Mono', monospace;
+
       background: var(--bg-color);
+
       color: var(--text-color);
+
       display: flex;
+
       flex-direction: column;
+
       align-items: center;
+
       justify-content: center;
+
       min-height: 100vh;
+
       padding: 2rem;
+
       overflow-x: hidden;
+
     }
+
     
+
     .container {
+
       display: flex;
+
       flex-direction: column;
+
       align-items: center;
+
       width: 100%;
+
       max-width: 800px;
+
     }
+
     
+
     h1 {
+
       font-size: 2rem;
+
       margin-bottom: 2rem;
+
       text-align: center;
+
     }
+
     
+
     .clock-container {
+
       position: relative;
+
       width: 100%;
+
       max-width: 500px;
+
       background: var(--clock-bg);
+
       border-radius: 16px;
+
       padding: 2rem;
+
       box-shadow: 0 10px 30px var(--shadow-color);
+
       margin-bottom: 2rem;
+
     }
+
     
+
     .clock {
+
       display: flex;
+
       justify-content: center;
+
       font-size: 4rem;
+
       font-weight: 700;
+
       color: var(--digit-color);
+
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
+
     }
+
     
+
     .clock span {
+
       display: inline-block;
+
       width: 0.6em;
+
       text-align: center;
+
       transition: color 0.3s ease, transform 0.3s ease;
+
     }
+
     
+
     .clock .separator {
+
       animation: blink 1s infinite;
+
     }
+
     
-    .clock.has-three-threes {
+
+    .clock.has-four-threes {
+
       color: var(--highlight-color);
+
       animation: pulse 0.5s ease-in-out infinite alternate;
+
     }
+
     
+
     .controls {
+
       display: flex;
+
       justify-content: center;
+
       gap: 1rem;
+
       margin-top: 1.5rem;
+
     }
+
     
+
     button {
+
       background: rgba(255, 255, 255, 0.1);
+
       border: none;
+
       color: var(--text-color);
+
       padding: 0.5rem 1rem;
+
       border-radius: 8px;
+
       cursor: pointer;
+
       font-family: 'Roboto Mono', monospace;
+
       transition: background 0.2s ease, transform 0.2s ease;
+
     }
+
     
+
     button:hover {
+
       background: rgba(255, 255, 255, 0.2);
+
       transform: translateY(-2px);
+
     }
+
     
+
     button:active {
+
       transform: translateY(0);
+
     }
+
     
+
     .speed-control {
+
       display: flex;
+
       align-items: center;
+
       margin-top: 1rem;
+
     }
+
     
+
     .speed-control label {
+
       margin-right: 0.5rem;
+
     }
+
     
+
     .speed-value {
+
       margin-left: 0.5rem;
+
       min-width: 3em;
+
     }
+
     
+
     .stats {
+
       background: rgba(255, 255, 255, 0.05);
+
       border-radius: 12px;
+
       padding: 1rem;
+
       margin-top: 1.5rem;
+
       width: 100%;
+
       text-align: center;
+
     }
+
     
-    .three-times-list {
+
+    .four-times-list {
+
       max-height: 200px;
+
       overflow-y: auto;
+
       margin-top: 1rem;
+
       padding: 1rem;
+
       background: rgba(0, 0, 0, 0.2);
+
       border-radius: 8px;
+
       display: grid;
+
       grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+
       gap: 0.5rem;
+
     }
+
     
-    .three-times-list div {
+
+    .four-times-list div {
+
       background: rgba(255, 51, 102, 0.2);
+
       padding: 0.5rem;
+
       border-radius: 4px;
+
       text-align: center;
+
       transition: background 0.2s ease;
+
     }
+
     
-    .three-times-list div.current {
+
+    .four-times-list div.current {
+
       background: rgba(255, 51, 102, 0.8);
+
       font-weight: bold;
+
     }
+
     
+
     @keyframes blink {
+
       0%, 100% { opacity: 1; }
+
       50% { opacity: 0.5; }
+
     }
+
     
+
     @keyframes pulse {
+
       0% { transform: scale(1); text-shadow: 0 0 10px rgba(255, 51, 102, 0.5); }
+
       100% { transform: scale(1.05); text-shadow: 0 0 20px rgba(255, 51, 102, 0.8); }
+
     }
+
   </style>
+
 </head>
+
 <body>
+
   <div class="container">
-    <h1>Animated Clock with Three 3's Highlight</h1>
+
+    <h1>Animated Clock with Four 3's Highlight</h1>
+
     
+
     <div class="clock-container">
+
       <div class="clock" id="clock">
+
         <span id="h1">0</span><span id="h2">0</span>
+
         <span class="separator">:</span>
+
         <span id="m1">0</span><span id="m2">0</span>
+
         <span class="separator">:</span>
+
         <span id="s1">0</span><span id="s2">0</span>
+
       </div>
+
       
+
       <div class="controls">
+
         <button id="start-btn">Start</button>
+
         <button id="pause-btn">Pause</button>
+
         <button id="reset-btn">Reset</button>
+
         <button id="skip-btn">Skip to Next Match</button>
+
       </div>
+
       
+
       <div class="speed-control">
+
         <label for="speed-slider">Speed:</label>
+
         <input type="range" id="speed-slider" min="1" max="1000" value="100">
+
         <span class="speed-value" id="speed-value">1x</span>
+
       </div>
+
       
+
       <div class="stats" id="stats">
-        <div>Found: <span id="found-count">0</span> / <span id="total-count">0</span> times with three 3's</div>
+
+        <div>Found: <span id="found-count">0</span> / <span id="total-count">0</span> times with four 3's</div>
+
         <div id="current-percentage">0.00%</div>
+
       </div>
+
     </div>
+
     
-    <h2>Times with Three 3's</h2>
-    <div class="three-times-list" id="three-times-list"></div>
+
+    <h2>Times with Four 3's</h2>
+
+    <div class="four-times-list" id="four-times-list"></div>
+
   </div>
+
   
+
   <script>
+
     // Clock elements
+
     const clockElement = document.getElementById('clock');
+
     const h1 = document.getElementById('h1');
+
     const h2 = document.getElementById('h2');
+
     const m1 = document.getElementById('m1');
+
     const m2 = document.getElementById('m2');
+
     const s1 = document.getElementById('s1');
+
     const s2 = document.getElementById('s2');
+
     
+
     // Controls
+
     const startBtn = document.getElementById('start-btn');
+
     const pauseBtn = document.getElementById('pause-btn');
+
     const resetBtn = document.getElementById('reset-btn');
+
     const skipBtn = document.getElementById('skip-btn');
+
     const speedSlider = document.getElementById('speed-slider');
+
     const speedValue = document.getElementById('speed-value');
+
     
+
     // Stats
+
     const foundCount = document.getElementById('found-count');
+
     const totalCount = document.getElementById('total-count');
+
     const currentPercentage = document.getElementById('current-percentage');
-    const threeTimesList = document.getElementById('three-times-list');
+
+    const fourTimesList = document.getElementById('four-times-list');
+
     
+
     // Variables
+
     let hours = 0;
+
     let minutes = 0;
+
     let seconds = 0;
+
     let timer = null;
+
     let speed = 100;  // milliseconds between updates
+
     let foundTimes = [];
+
     let currentIndex = 0;
-    let allTimesWithThreeThrees = [];
+
+    let allTimesWithFourThrees = [];
+
     let totalTimesFound = 0;
+
     
+
     // Pad a number with leading zeros
+
     function pad(num) {
+
       return num.toString().padStart(2, '0');
+
     }
+
     
+
     // Update the clock display
+
     function updateClockDisplay() {
+
       const timeString = pad(hours) + pad(minutes) + pad(seconds);
+
       
+
       h1.textContent = timeString[0];
+
       h2.textContent = timeString[1];
+
       m1.textContent = timeString[2];
+
       m2.textContent = timeString[3];
+
       s1.textContent = timeString[4];
+
       s2.textContent = timeString[5];
+
       
-      // Check if the current time has exactly three 3's
+
+      // Check if the current time has exactly four 3's
+
       const count = (timeString.match(/3/g) || []).length;
+
       const currentTime = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+
       
-      if (count === 3) {
-        clockElement.classList.add('has-three-threes');
+
+      if (count === 4) {
+
+        clockElement.classList.add('has-four-threes');
+
         
+
         // Add to list if not already there
+
         if (!foundTimes.includes(currentTime)) {
+
           foundTimes.push(currentTime);
+
           const timeDiv = document.createElement('div');
+
           timeDiv.textContent = currentTime;
+
           timeDiv.id = `time-${currentTime.replace(/:/g, '-')}`;
-          threeTimesList.appendChild(timeDiv);
+
+          fourTimesList.appendChild(timeDiv);
+
           
+
           // Update stats
+
           foundCount.textContent = foundTimes.length;
+
           
+
           // Scroll to the element
+
           timeDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
         } else {
+
           // Highlight current time in the list
-          const allTimeDivs = threeTimesList.querySelectorAll('div');
+
+          const allTimeDivs = fourTimesList.querySelectorAll('div');
+
           allTimeDivs.forEach(div => div.classList.remove('current'));
+
           
+
           const currentTimeDiv = document.getElementById(`time-${currentTime.replace(/:/g, '-')}`);
+
           if (currentTimeDiv) currentTimeDiv.classList.add('current');
+
         }
+
       } else {
-        clockElement.classList.remove('has-three-threes');
+
+        clockElement.classList.remove('has-four-threes');
+
         // Remove highlight from all items when not on a match
-        const allTimeDivs = threeTimesList.querySelectorAll('div');
+
+        const allTimeDivs = fourTimesList.querySelectorAll('div');
+
         allTimeDivs.forEach(div => div.classList.remove('current'));
+
       }
+
       
+
       // Update percentage
+
       const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+
       const percentage = (totalSeconds / 86400 * 100).toFixed(2);
+
       currentPercentage.textContent = `Progress: ${percentage}%`;
+
     }
+
     
+
     // Increment the clock
+
     function incrementClock() {
+
       seconds++;
+
       if (seconds >= 60) {
+
         seconds = 0;
+
         minutes++;
+
         if (minutes >= 60) {
+
           minutes = 0;
+
           hours++;
+
           if (hours >= 24) {
+
             // We've completed a full day, stop the clock
+
             hours = 0;
+
             pauseClock();
+
             alert('Completed full day cycle!');
+
           }
+
         }
+
       }
+
       updateClockDisplay();
+
     }
+
     
+
     // Start the clock
+
     function startClock() {
+
       if (timer === null) {
+
         timer = setInterval(incrementClock, speed);
+
       }
+
     }
+
     
+
     // Pause the clock
+
     function pauseClock() {
+
       clearInterval(timer);
+
       timer = null;
+
     }
+
     
+
     // Reset the clock
+
     function resetClock() {
+
       pauseClock();
+
       hours = 0;
+
       minutes = 0;
+
       seconds = 0;
+
       updateClockDisplay();
+
     }
+
     
-    // Pre-calculate all times with three 3's
-    function calculateTimesWithThreeThrees() {
+
+    // Pre-calculate all times with four 3's
+
+    function calculateTimesWithFourThrees() {
+
       for (let h = 0; h < 24; h++) {
+
         for (let m = 0; m < 60; m++) {
+
           for (let s = 0; s < 60; s++) {
+
             const time = pad(h) + pad(m) + pad(s);
+
             const count = (time.match(/3/g) || []).length;
-            if (count === 3) {
-              allTimesWithThreeThrees.push({ h, m, s });
+
+            if (count === 4) {
+
+              allTimesWithFourThrees.push({ h, m, s });
+
             }
+
           }
+
         }
+
       }
-      totalCount.textContent = allTimesWithThreeThrees.length;
-      totalTimesFound = allTimesWithThreeThrees.length;
+
+      totalCount.textContent = allTimesWithFourThrees.length;
+
+      totalTimesFound = allTimesWithFourThrees.length;
+
     }
+
     
-    // Skip to the next time with three 3's
+
+    // Skip to the next time with four 3's
+
     function skipToNextMatch() {
+
       pauseClock();
+
       
-      // Find the next time with three 3's
+
+      // Find the next time with four 3's
+
       let found = false;
+
       let tempHours = hours;
+
       let tempMinutes = minutes;
+
       let tempSeconds = seconds + 1; // Start from the next second
+
       
+
       // Normalize the time
+
       if (tempSeconds >= 60) {
+
         tempSeconds = 0;
+
         tempMinutes++;
+
         if (tempMinutes >= 60) {
+
           tempMinutes = 0;
+
           tempHours++;
+
           if (tempHours >= 24) {
+
             tempHours = 0;
+
           }
+
         }
+
       }
+
       
+
       // Loop through all possible times, limited to one full day
+
       let iterations = 0;
+
       const maxIterations = 24 * 60 * 60; // Maximum seconds in a day
+
       
+
       while (!found && iterations < maxIterations) {
+
         const timeString = pad(tempHours) + pad(tempMinutes) + pad(tempSeconds);
+
         const count = (timeString.match(/3/g) || []).length;
+
         
-        if (count === 3) {
+
+        if (count === 4) {
+
           found = true;
+
           hours = tempHours;
+
           minutes = tempMinutes;
+
           seconds = tempSeconds;
+
           updateClockDisplay();
+
           break;
+
         }
+
         
+
         // Increment second
+
         tempSeconds++;
+
         if (tempSeconds >= 60) {
+
           tempSeconds = 0;
+
           tempMinutes++;
+
           if (tempMinutes >= 60) {
+
             tempMinutes = 0;
+
             tempHours++;
+
             if (tempHours >= 24) {
+
               tempHours = 0;
+
             }
+
           }
+
         }
+
         
+
         iterations++;
+
       }
+
       
+
       if (!found) {
-        alert('No more times with three 3\'s found in the day!');
+
+        alert('No more times with four 3\'s found in the day!');
+
       }
+
     }
+
     
+
     // Event listeners
+
     startBtn.addEventListener('click', startClock);
+
     pauseBtn.addEventListener('click', pauseClock);
+
     resetBtn.addEventListener('click', resetClock);
+
     skipBtn.addEventListener('click', skipToNextMatch);
+
     
+
     speedSlider.addEventListener('input', function() {
+
       speed = 1000 / (this.value / 100);
+
       speedValue.textContent = `${(this.value / 100).toFixed(1)}x`;
+
       
+
       // If clock is running, restart it with new speed
+
       if (timer !== null) {
+
         pauseClock();
+
         startClock();
+
       }
+
     });
+
     
+
     // Initialize
-    calculateTimesWithThreeThrees();
+
+    calculateTimesWithFourThrees();
+
     updateClockDisplay();
+
   </script>
+
 </body>
+
 </html>
